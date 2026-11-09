@@ -157,6 +157,21 @@ function queueRefresh() {
   if (renderTimer) return;
   renderTimer = setTimeout(() => { renderTimer = undefined; void refreshAvatars(); void refreshStickers(); }, 80);
 }
+// The second column in a message may be a traditional iili.io filename, a full
+// URL, or a library ID (e.g. avatar_mw925z40_casltd). A library ID is NOT a URL.
+function avatarCodeFromElement(element) {
+  const explicit = String(element.dataset.lbAvatarRef || '').trim();
+  if (explicit) return explicit;
+  // Compatibility with regex files shipped before 1.2.6.
+  const original = String(element.dataset.lbOriginal || element.getAttribute('src') || '');
+  if (original.startsWith('https://iili.io/')) return original.slice('https://iili.io/'.length);
+  return original;
+}
+function remoteAvatarUrl(code) {
+  const raw = String(code || '').trim();
+  if (/^[a-z0-9_-]+\.(?:jpe?g|png|webp|gif)$/i.test(raw)) return `https://iili.io/${raw}`;
+  return safeHref(raw);
+}
 async function refreshAvatars() {
   const request = ++currentRequest;
   const selected = selections();
@@ -164,21 +179,30 @@ async function refreshAvatars() {
   for (const element of elements) {
     const name = resolvedName(element.dataset.lbName);
     if (!element.dataset.lbOriginal) element.dataset.lbOriginal = element.getAttribute('src') || '';
+    const sourceCode = avatarCodeFromElement(element);
     element.title = `点击更换「${name}」的头像`;
     element.tabIndex = 0;
     element.setAttribute('role', 'button');
     element.setAttribute('aria-label', `更换${name}的头像`);
-    const ref = selected[name];
-    const item = findItem(ref);
-    if (!item) {
-      if (element.getAttribute('src') !== element.dataset.lbOriginal) element.src = element.dataset.lbOriginal;
-      element.dataset.lbApplied = '';
-      continue;
-    }
-    if (element.dataset.lbApplied === ref) continue;
-    const url = await ensureImage(item);
+    // A manual/previously chosen avatar takes precedence, otherwise resolve
+    // the message's own avatar ID. Without this the browser tries to request
+    // https://iili.io/avatar_xxx and displays a broken-image icon.
+    const item = findItem(selected[name]) || findItem(sourceCode);
+    const url = item ? await ensureImage(item) : remoteAvatarUrl(sourceCode);
     if (request !== currentRequest) return;
-    if (url && element.isConnected) { element.src = url; element.dataset.lbApplied = ref; }
+    const marker = item ? `library:${item.id}` : `remote:${sourceCode}`;
+    if (url && element.isConnected) {
+      if (element.dataset.lbApplied !== marker || element.getAttribute('src') !== url) {
+        element.src = url;
+        element.dataset.lbApplied = marker;
+      }
+    } else if (element.isConnected && /^avatar_[a-z0-9_-]+$/i.test(sourceCode)) {
+      // An ID absent from the current device cannot be resolved to a photo.
+      // Prevent the fake iili.io URL from being treated as an image.
+      element.removeAttribute('src');
+      element.alt = '本地头像未在此设备找到';
+      element.title = '此本地头像未在当前设备找到；点击头像可重新选择。';
+    }
   }
 }
 async function refreshStickers() {
@@ -220,7 +244,7 @@ function liveAiLibraryText() {
   if (customAvatars.length) {
     rows.push('用户新增头像（ID / 分类 / 名称 / 备注）：');
     for (const x of customAvatars) rows.push(`头像ID:${clean(x.id,70)}；分类:${clean(x.category,12)}；名称:${clean(x.name,40)}；备注:${clean(x.note,120) || '无'}`);
-    rows.push('角色/NPC在剧情合理地更换头像时，可在聊天气泡之外输出 <AV_SET>发言昵称|头像ID</AV_SET>。');
+    rows.push('头像消息第二栏允许直接使用已有头像ID（例如 avatar_xxx），由扩展从图库解析，不要把ID伪装成图片网址。角色/NPC在剧情合理地更换头像时，可在聊天气泡之外输出 <AV_SET>发言昵称|头像ID</AV_SET>。');
   }
   if (customStickers.length) {
     rows.push('用户新增表情包（以下ID可用于L_EMJ或R_EMJ标签的第三段）：');
@@ -266,7 +290,7 @@ function macroText() {
       rows.push(`- ID:${item.id}；名称:${clean(item.name)}；${item.category === 'couple' ? `配对:${clean(item.pair)}；位置:${item.side}；` : ''}备注:${clean(item.note, 120) || '无'}；来源:${item.source === 'local' ? '本地文件(不可直接被AI读取)' : 'URL'}`);
     }
   }
-  rows.push('如符合剧情，AI可在消息末尾输出一次 <AV_SET>发言昵称|头像ID</AV_SET> 为CHAR/NPC换头像；情侣成套更换用 <AV_PAIR>配对名称|角色发言昵称|用户发言昵称</AV_PAIR>。这些是控制标签，不是聊天气泡。未经用户明确要求不要更换USER头像；系统默认也会拦截AI改USER头像。');
+  rows.push('头像消息第二栏可直接填写上面真实存在的头像ID，由扩展加载本地图片；ID不是iili.io网址。如符合剧情，AI可在消息末尾输出一次 <AV_SET>发言昵称|头像ID</AV_SET> 为CHAR/NPC换头像；情侣成套更换用 <AV_PAIR>配对名称|角色发言昵称|用户发言昵称</AV_PAIR>。这些是控制标签，不是聊天气泡。未经用户明确要求不要更换USER头像；系统默认也会拦截AI改USER头像。');
   rows.push('自定义表情包（由用户上传，不是头像；以下 ID 可以在表情消息第三栏使用）：');
   const stickers = s.stickers.slice(0, 100);
   for (const sticker of stickers) {

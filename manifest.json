@@ -7,7 +7,7 @@
   "js": "index.js",
   "css": "style.css",
   "author": "薄叶（原版轻量气泡） / yspyan（基于原作二次修改）",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "auto_update": true,
   "hooks": {
     "update": "onUpdate"
