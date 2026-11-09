@@ -583,3 +583,24 @@ if (ctx()?.eventSource && ctx()?.event_types?.APP_READY) {
   const timer = setInterval(() => { if (ctx()?.eventSource) { clearInterval(timer); init(); } }, 250);
   setTimeout(() => clearInterval(timer), 30000);
 }
+
+/**
+ * SillyTavern calls the `update` lifecycle hook after a successful extension update.
+ * Page refresh must happen after update completes so new JS/CSS loads; no polling or
+ * reload-on-load is used (which would otherwise create a refresh loop).
+ */
+let lightBubbleReloadScheduled = false;
+export function onUpdate() {
+  if (lightBubbleReloadScheduled) return;
+  lightBubbleReloadScheduled = true;
+  console.info('[light-bubble-library] Extension updated; automatically reloading the page.');
+  // Let SillyTavern finish its update completion UI before replacing the document.
+  globalThis.setTimeout(() => {
+    try {
+      globalThis.location.reload();
+    } catch (error) {
+      console.warn('[light-bubble-library] Reload was blocked:', error);
+      lightBubbleReloadScheduled = false;
+    }
+  }, 1200);
+}
