@@ -157,3 +157,19 @@ body > .lb-overlay .lb-close {
 .lb-sticker-count { grid-column: 1/-1; font-size: 12px; color: #777; margin: 0; padding: 2px 0; }
 .lb-sticker-more { grid-column: 1/-1; font-size: 13px; color: #222; background: #f3f3f3; border: 1px solid #ddd; border-radius: 8px; padding: 12px; cursor: pointer; min-height: 44px; }
 .lb-card-preset { display: block; padding: 6px 2px; font-size: 11px; color: #777; background: #f7f7f7; border-top: 1px solid #eee; text-align: center; }
+
+
+/* v1.2.7 fallback bubbles: used only if a message was not handled by regex. */
+#chat .lb-fallback-message { box-sizing: border-box; max-width: 600px; padding: 2px 10px; margin: 0 auto 10px; width: 100%; display: flex; align-items: flex-start; gap: 8px; font-size: 1rem; }
+#chat .lb-fallback-message.lb-fallback-right { justify-content: flex-end; }
+#chat .lb-fallback-avatar { width: 30px; height: 30px; flex: 0 0 30px; border-radius: 5px; object-fit: cover; cursor: pointer; }
+#chat .lb-fallback-body { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+#chat .lb-fallback-right .lb-fallback-body { align-items: flex-end; }
+#chat .lb-fallback-name { font-size: .6em; color: #888; line-height: 1.4; margin-bottom: 2px; }
+#chat .lb-fallback-bubble { position: relative; background: #f5f5f5; border-radius: 5px; padding: 8px 15px; max-width: 250px; min-width: 0; color: #000; overflow-wrap: anywhere; }
+#chat .lb-fallback-right .lb-fallback-bubble { background: #a0e75a; }
+#chat .lb-fallback-bubble::before { content: ''; position: absolute; top: 8px; left: -6px; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-right: 6px solid #f5f5f5; }
+#chat .lb-fallback-right .lb-fallback-bubble::before { left: auto; right: -6px; border-right: 0; border-left: 6px solid #a0e75a; }
+#chat .lb-fallback-text { margin: 0; white-space: pre-wrap; line-height: 1.4; font-size: 1em; }
+#chat .lb-fallback-sticker { max-width: 110px; padding: 3px; }
+#chat .lb-fallback-sticker-image { display: block; width: 100%; max-width: 100px; border-radius: 4px; height: auto; }

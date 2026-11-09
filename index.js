@@ -155,7 +155,7 @@ async function setPair(pair, charNick, userNick, { fromAi = false } = {}) {
 function resolvedName(name) { return clean(name, 80); }
 function queueRefresh() {
   if (renderTimer) return;
-  renderTimer = setTimeout(() => { renderTimer = undefined; void refreshAvatars(); void refreshStickers(); }, 80);
+  renderTimer = setTimeout(() => { renderTimer = undefined; scanUnrenderedMessages(); void refreshAvatars(); void refreshStickers(); }, 80);
 }
 // The second column in a message may be a traditional iili.io filename, a full
 // URL, or a library ID (e.g. avatar_mw925z40_casltd). A library ID is NOT a URL.
@@ -220,6 +220,107 @@ async function refreshStickers() {
         image.dataset.lbApplied = sticker.id;
       }
     } catch (error) { console.warn('[light-bubble] sticker load failed', error); }
+  }
+}
+
+
+/**
+ * Compatibility renderer for messages that SillyTavern did not pass through
+ * the bundled display-only regex. This runs only on <L_TXT>/<R_TXT>/<L_EMJ>/<R_EMJ>
+ * tags actually visible in the rendered chat DOM; it never edits stored chat.
+ * It also recognizes legacy regex HTML containing broken local-ID image URLs.
+ */
+function makeMediaBubble(kind, raw) {
+  const parts = String(raw || '').split('|');
+  if (parts.length < 3) return null;
+  const name = clean(parts.shift(), 80);
+  const avatarRef = clean(parts.shift(), 300);
+  const content = parts.join('|').trim();
+  if (!name || !avatarRef || !content) return null;
+  const right = kind.startsWith('R_');
+  const media = kind.endsWith('_EMJ');
+  const outer = make('div', `lb-fallback-message ${right ? 'lb-fallback-right' : 'lb-fallback-left'}`);
+  const avatar = make('img', 'lb-speaker-avatar lb-fallback-avatar');
+  avatar.dataset.lbName = name;
+  avatar.dataset.lbAvatarRef = avatarRef;
+  avatar.alt = `${name}头像`;
+  const initial = remoteAvatarUrl(avatarRef);
+  if (initial) avatar.src = initial;
+  const body = make('div', 'lb-fallback-body');
+  body.append(make('div', 'lb-fallback-name', name));
+  const bubble = make('div', `lb-fallback-bubble ${media ? 'lb-fallback-sticker' : ''}`);
+  if (media) {
+    const img = make('img', 'lb-sticker-image lb-fallback-sticker-image');
+    img.dataset.lbSticker = content;
+    img.alt = '聊天表情包';
+    const code = /^STK:/i.test(content) ? '' : safeHref(content, 'catbox');
+    if (code) img.src = code;
+    bubble.append(img);
+  } else {
+    const p = make('p', 'lb-fallback-text');
+    p.textContent = content; // preserves < and > in emoticons safely
+    bubble.append(p);
+  }
+  body.append(bubble);
+  if (right) outer.append(body, avatar);
+  else outer.append(avatar, body);
+  return outer;
+}
+const lbRawMessageTags = ['L_TXT','R_TXT','L_EMJ','R_EMJ'];
+function scanUnrenderedMessages() {
+  const root = document.querySelector('#chat');
+  if (!root) return;
+  // Unknown HTML tags are real elements in WebKit/Chromium when display
+  // regexes are absent. Using DOM APIs avoids executing user-provided HTML.
+  for (const tag of lbRawMessageTags) {
+    for (const element of root.querySelectorAll(tag.toLowerCase())) {
+      if (element.closest('pre, code, textarea, .lb-fallback-message')) continue;
+      const bubble = makeMediaBubble(tag, element.textContent);
+      if (bubble) element.replaceWith(bubble);
+    }
+  }
+  // If the renderer escaped the '<' and '>' characters, the tag remains
+  // a plain text node. Replace only fully-contained tags, not partial text.
+  const pattern = /<(L_TXT|R_TXT|L_EMJ|R_EMJ)>((?:(?!<\/(?:L_TXT|R_TXT|L_EMJ|R_EMJ)>)[\s\S])*?)<\/\1>/gi;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const candidates = [];
+  while (walker.nextNode()) {
+    const n = walker.currentNode;
+    if (!n.nodeValue?.includes('_TXT>') && !n.nodeValue?.includes('_EMJ>')) continue;
+    if (n.parentElement?.closest('pre, code, textarea, .lb-fallback-message')) continue;
+    candidates.push(n);
+  }
+  for (const n of candidates) {
+    const text = n.nodeValue || '';
+    const re = new RegExp(pattern.source, 'gi');
+    let match, last = 0, count = 0;
+    const frag = document.createDocumentFragment();
+    while ((match = re.exec(text)) !== null) {
+      const bubble = makeMediaBubble(match[1].toUpperCase(), match[2]);
+      if (!bubble) continue;
+      if (match.index > last) frag.append(document.createTextNode(text.slice(last, match.index)));
+      frag.append(bubble);
+      last = re.lastIndex;
+      count++;
+    }
+    if (count && n.isConnected) {
+      if (last < text.length) frag.append(document.createTextNode(text.slice(last)));
+      n.replaceWith(frag);
+    }
+  }
+  // Older regexes may already have produced HTML, but used a made-up
+  // remote URL for local image IDs. Mark these images for dynamic hydration.
+  for (const img of root.querySelectorAll('img:not(.lb-speaker-avatar)[src^="https://iili.io/avatar_"]')) {
+    const original = img.getAttribute('src') || '';
+    const code = original.slice('https://iili.io/'.length);
+    img.classList.add('lb-speaker-avatar');
+    img.dataset.lbAvatarRef = code;
+    const name = img.parentElement?.querySelector('p')?.textContent?.trim() || currentCharName();
+    img.dataset.lbName = name;
+  }
+  for (const img of root.querySelectorAll('img:not(.lb-sticker-image)[src*="files.catbox.moe/STK:"]')) {
+    img.classList.add('lb-sticker-image');
+    img.dataset.lbSticker = (img.getAttribute('src') || '').split('files.catbox.moe/').pop();
   }
 }
 
