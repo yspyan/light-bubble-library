@@ -12,21 +12,36 @@ const AVATAR_CATS = [
 ];
 const CATS = [...AVATAR_CATS, ['sticker', '表情包']];
 const SOURCE = [
-  ['char', '看雪小猫', 'KbcQEW7.jpg', '原预设默认头像'],
-  ['char', '边牧吐舌', 'f9X6tcu.jpg', ''],
-  ['char', '弹琴奶牛猫', 'f76RLjj.jpg', ''],
-  ['char', '灰色山雀', 'f76lDMJ.jpg', ''],
-  ['user', '微笑猫猫', 'Kbcpies.jpg', '原预设默认头像'],
-  ['npc', 'NPC通用头像', 'Kbc8AXf.jpg', '通用头像'],
+  ['char', '冷脸帅气黑发男', 'nbR22Lv.jpg', '此世界书默认CHAR头像'],
+  ['char', '骚气吐舌黑发男', 'nb7Bhaj.png', ''],
+  ['char', '头上顶着100%笨蛋的小狗', 'nbRZw1n.png', ''],
+  ['char', '菠萝猫', 'nb7KkZX.png', ''],
+  ['char', '一个菠萝', 'nb7qvrG.jpg', ''],
+  ['user', '躺床上睡觉的呆猫八条', 'nb7nMdb.png', '此世界书默认USER头像'],
+  ['npc', 'NPC通用', 'Kbc8AXf.jpg', ''],
+  ['npc', '沈逾头像', 'nb5LBoP.png', ''],
+  ['npc', '花弄雨头像', 'nb5bhPI.png', ''],
+  ['npc', '宋知行头像', 'nb5p7YF.png', ''],
+  ['npc', '林燃头像', 'nb5ELKJ.png', ''],
 ];
-const base = SOURCE.map(([category, name, code, note], i) => ({
-  id: `preset_${i + 1}`, category, name, note, source: 'url',
+const base = SOURCE.map(([category, name, code, note]) => ({
+  id: `lb_v2_${code.replace(/\W/g, '_')}`, category, name, note, source: 'url',
   url: `https://iili.io/${code}`, pair: '', side: '',
 }));
 base.push(
-  { id: 'preset_couple_char', category: 'couple', name: '动漫情侣男头', note: '金发少年垂眸看揽住他手臂的白发少女', source: 'url', url: 'https://iili.io/faaU7zN.jpg', pair: '动漫金发×白发', side: 'char' },
-  { id: 'preset_couple_user', category: 'couple', name: '动漫情侣女头', note: '白发蓝瞳少女揽住左边少年手臂', source: 'url', url: 'https://iili.io/faa4wLN.jpg', pair: '动漫金发×白发', side: 'user' },
+  { id: 'lb_v2_couple_1_char', category: 'couple', name: '被少女搂着脖子脸红的黑发少男', note: '动漫情侣男头', source: 'url', url: 'https://iili.io/nb7h9gn.jpg', pair: '被搂脖子脸红', side: 'char' },
+  { id: 'lb_v2_couple_1_user', category: 'couple', name: '搂着黑发少男脖子的少女', note: '动漫情侣女头', source: 'url', url: 'https://iili.io/nb7hJJs.jpg', pair: '被搂脖子脸红', side: 'user' },
+  { id: 'lb_v2_couple_2_char', category: 'couple', name: '亲吻少女头发的少男', note: '动漫情侣男头', source: 'url', url: 'https://iili.io/nb7Xpft.jpg', pair: '亲吻发间', side: 'char' },
+  { id: 'lb_v2_couple_2_user', category: 'couple', name: '被少男亲吻发间的少女', note: '动漫情侣女头', source: 'url', url: 'https://iili.io/nb7Xy0X.jpg', pair: '亲吻发间', side: 'user' },
+  { id: 'lb_v2_couple_3_char', category: 'couple', name: '捧着《如何做一位贤惠男人》读书的狗', note: '情侣男头', source: 'url', url: 'https://iili.io/nb7OCjj.png', pair: '贤惠读书狗狗', side: 'char' },
+  { id: 'lb_v2_couple_3_user', category: 'couple', name: '捧着《越过越好的女人》读书的狗', note: '情侣女头', source: 'url', url: 'https://iili.io/nb7OnZx.png', pair: '贤惠读书狗狗', side: 'user' },
 );
+function mergePresetItems(items) {
+  // Upgrade existing users in-place without erasing custom uploads or selected avatar IDs.
+  const known = new Set(items.map(x => x.id));
+  for (const item of base) if (!known.has(item.id)) items.push({ ...item });
+  return items;
+}
 
 const imgCache = new Map();
 const stickerCache = new Map();
@@ -44,6 +59,10 @@ function store() {
   }
   const s = c.extensionSettings[KEY];
   if (!Array.isArray(s.items)) s.items = base.map(x => ({ ...x }));
+  else if (base.some(x => !s.items.some(y => y.id === x.id))) {
+    mergePresetItems(s.items);
+    c.saveSettingsDebounced?.();
+  }
   if (!Array.isArray(s.stickers)) s.stickers = [];
   if (typeof s.allowAiUser !== 'boolean') s.allowAiUser = false;
   return s;
@@ -188,7 +207,7 @@ function macroText() {
       rows.push(`- ID:${item.id}；名称:${clean(item.name)}；${item.category === 'couple' ? `配对:${clean(item.pair)}；位置:${item.side}；` : ''}备注:${clean(item.note, 120) || '无'}；来源:${item.source === 'local' ? '本地文件(不可直接被AI读取)' : 'URL'}`);
     }
   }
-  rows.push('如符合剧情，AI可在消息末尾输出一次 <AV_SET发言昵称|头像ID</AV_SET> 为CHAR/NPC换头像；情侣成套更换用 <AV_PAIR>配对名称|角色发言昵称|用户发言昵称</AV_PAIR>。这些是控制标签，不是聊天气泡。未经用户明确要求不要更换USER头像；系统默认也会拦截AI改USER头像。');
+  rows.push('如符合剧情，AI可在消息末尾输出一次 <AV_SET>发言昵称|头像ID</AV_SET> 为CHAR/NPC换头像；情侣成套更换用 <AV_PAIR>配对名称|角色发言昵称|用户发言昵称</AV_PAIR>。这些是控制标签，不是聊天气泡。未经用户明确要求不要更换USER头像；系统默认也会拦截AI改USER头像。');
   rows.push('自定义表情包（由用户上传，不是头像；以下 ID 可以在表情消息第三栏使用）：');
   const stickers = s.stickers.slice(0, 100);
   for (const sticker of stickers) {
