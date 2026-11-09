@@ -11,6 +11,15 @@ const AVATAR_CATS = [
   ['char', 'CHAR'], ['user', 'USER'], ['npc', 'NPC'], ['couple', '情侣头像'],
 ];
 const CATS = [...AVATAR_CATS, ['sticker', '表情包']];
+
+// Original world-book sticker presets. These are catalog entries, NOT user uploads.
+// Kept separate so an update can never overwrite a user's custom stickers.
+const PRESET_STICKERS = [["喜欢你","egvwqb.jpg"],["好喜欢你","9cz4he.jpg"],["爱你","gpffv3.jpg"],["超爱你","so921g.jpg"],["大大的爱","wabm2j.jpg"],["给你爱心","o3boww.jpg"],["你好美你长得像我爱人","hmpkra.jpg"],["你太可爱我喜欢你","ubhai8.jpg"],["脸红星星眼","dsfs7o.jpg"],["只有我是真心的","rhdqdp.jpg"],["你是我老婆","8nn1lj.jpg"],["直接求婚","x1dfxb.jpg"],["把你老公删了我要当你老公","ibo6zd.gif"],["裤裆掏玫瑰","l7q8yz.gif"],["小猫伸爪","f6nqiq.gif"],["小狗摇尾巴","hmdj2k.gif"],["摇尾巴","nvv03u.gif"],["蹭蹭","wnp9jl.gif"],["狗鼻子拱拱你","kip4fo.gif"],["狗舔舔","esw5e2.gif"],["狗狗舔小猫","vj1714.gif"],["爱你舔舔你","ola7gd.jpg"],["我是你的小狗","gnna86.gif"],["乖乖当狗","bgid0b.jpg"],["乖乖跟着","ydtn6e.jpg"],["揉揉你","qqkv1z.gif"],["想被摸头","m8qcef.jpg"],["抱抱","qt4qzg.jpg"],["抱抱","iu31o0.png"],["抱抱","x0ayyd.jpg"],["紧紧抱住","2hon5k.jpg"],["想抱抱","xk1xyb.jpg"],["扑过来","czdmyn.jpg"],["小狗飞扑","9yz8nz.jpg"],["宠爱地亲","wqn5ki.jpg"],["偷亲一口","1jgvb1.gif"],["亲你的手","nls3gm.jpg"],["亲我","jb6xww.jpg"],["想亲亲","2fnd9p.jpg"],["要亲亲吗不许拒绝","umvaji.jpg"],["想跟你说话","ao6ug3.jpg"],["快理我","jqkk07.jpg"],["想见你","xpx0ef.jpg"],["没见到你就没精神","7loj5f.jpg"],["早点回来","i0jpf0.jpg"],["老婆你回来吧","ge0bjd.jpg"],["我来咯","r9cix2.gif"],["蹦蹦跳跳","q6bahb.jpg"],["开心","9242jm.jpg"],["开心开心","gmsu65.jpg"],["高兴","slcf6y.gif"],["高兴地转圈","26rwpc.jpg"],["高兴地被喂饭","8uz920.jpg"],["好耶","h0jeiw.gif"],["哦耶","nff4qi.jpg"],["耶","rneasm.gif"],["惊喜","9rexzn.gif"],["小期待小惊喜","335fzr.gif"],["骄傲","6vjw8z.jpg"],["满脸骄傲","h1mf7j.jpg"],["得意","iroajh.jpg"],["嘚瑟","5df7q9.jpg"],["贱笑","jgicqw.png"],["对不起帅到你了","7yez84.jpeg"],["人生易如反掌","2gn0b9.jpg"],["快说我好","h46pk8.png"],["你说我什么都特别好快说啊","y7kaf2.jpg"],["可怜巴巴","3nvu7b.gif"],["装可怜","lcglz1.jpg"],["孤独低落狗","z09102.jpg"],["伤心","mm64gb.jpg"],["有点伤心","6dr5zw.jpg"],["失望","eug1e6.jpeg"],["忍眼泪","td0cz7.gif"],["要掉眼泪了","cdaxhk.jpg"],["要哭了","tnilep.jpg"],["想哭","yzroz7.jpg"],["哽咽","0cmn6h.jpg"],["泪","blnrmg.jpeg"],["擦眼泪","9gno7e.jpg"],["我在哭","t343od.jpg"],["丑猫哭哭","4ybcj1.jpg"],["大哭","3ox1j2.gif"],["大哭","auylzr.jpg"],["大哭","d8804d.png"],["超大声哭哭","186h5v.jpg"],["痛哭","v4g8v6.jpg"],["被揍了哭哭","81x5zq.jpg"],["被骂饱了","vpixr4.jpg"],["你嫌我丢人","8d71mm.jpg"],["笑不出来","xkop14.jpg"],["我是败犬","czova4.jpg"],["落魄","qcxnbl.gif"],["真倒霉","xvi105.gif"],["我做错什么了","bfukx4.jpeg"],["害羞","rqtdfm.jpg"],["拘谨扭捏","2vejqs.jpg"],["扭捏","9pon3x.jpeg"],["蹑手蹑脚","7mdkef.jpg"],["犯错后心虚","rejhsf.jpg"],["超级心虚","k3xk40.jpg"],["冷汗心虚笑","nj0i5e.png"],["装无辜","pdjeef.jpg"],["目移","69jgvg.jpg"],["我没事","0q0gb4.gif"],["别难为狗了","gopu17.jpg"],["我老实了","i3ws7s.jpg"],["已老实","rv76c1.jpg"],["已老实","7i0klk.jpeg"],["反省中","1ran24.jpg"],["想道歉","ghmrah.jpg"],["心虚讨好","mxtaj7.jpg"],["没问题领导","l9uwyy.jpg"],["恳求脸","i5etcm.jpg"],["拜托拜托","ia901u.jpg"],["求求你","nkpkcv.jpg"],["我真的求你了","utc5vd.jpg"],["厚脸皮","5yoguw.jpg"],["朕何罪之有啊","vlw07l.jpg"],["不高兴","x6lv1t.jpg"],["有点生气","evzdkv.jpg"],["皱眉","nibd87.gif"],["生气瞪你","mzoekx.jpg"],["翻白眼","fl2qbd.png"],["任性","wyt6z7.jpg"],["我忍","ftwaba.jpg"],["记仇","co9rcr.gif"],["战斗小狗","c5ccwc.jpg"],["咬咬咬咬","ogs4t5.jpg"],["狂犬病发作","xb3naz.jpg"],["枪毙你","ntikzr.png"],["如何呢打死我","cwlm5y.png"],["打到你性功能障碍","bx3848.jpg"],["在全世界头上拉屎","jeawjx.png"],["希望我讨厌的人都死掉","gzs6fh.jpg"],["路过吐口痰纯恶意","qeosjj.jpeg"],["零元即可拉黑脑残","jfdy3i.jpg"],["问号","buuins.jpg"],["没理解","br6rc0.jpg"],["大眼睛小老鼠看着你","zs7e0o.jpg"],["震惊","v5n2ve.jpg"],["惊吓","tp9uvd.jpg"],["震惊害怕","muc86m.jpg"],["看呆","mqnepo.jpg"],["目瞪口呆","2yegj0.jpg"],["严肃","jsn2r2.png"],["沉默无言","mzyapz.jpg"],["一笑了之","9llb46.jpg"],["已读不回","wsppsj.jpg"],["没一句我爱听的","rlulyv.jpg"],["懒得喷","wgzlm7.jpg"],["懒得喷","9h7ku8.png"],["我真服了","2uz6xq.gif"],["我操","klwqm3.jpg"],["我操","xjhzy5.jpg"],["我操恶俗啊","c3mpnq.jpg"],["卧槽恶俗啊","ynsp7x.jpg"],["真是被看扁了","osdyqi.jpg"],["他妈的真是被看扁了","ime5rz.jpg"],["被看扁","kwaivy.png"],["我是狗吗","ma9azs.jpg"],["你们好会装逼啊","u218ys.jpg"],["上面的人是同性恋","4d1wex.jpg"],["你自首吧","dfz8rj.jpg"],["我想报警","vfqvm7.jpg"],["你出精神病院的时候是怎么跟我保证的","epecjr.jpg"],["抽象爆炸猫猫","0ua95a.jpg"],["神经抽象旋转猫","6pqpk0.jpg"],["神经弹跳猫","ft35m5.jpg"],["神经猫猫跳舞","07cv2p.jpg"],["打滚耍赖","tje9am.jpg"],["弱智兔头","6svelp.jpg"],["我的理性在远去","t9e065.jpg"],["网络毁了我","1ppjfe.jpg"],["给社会添乱","ncbsf4.jpg"],["我放弃做人了","06u90w.jpg"],["文盲又在歹毒的学习","vwn5kd.jpg"],["不干活就没饭吃","2qnrgh.jpg"],["呜呜不想工作想要钱","i0nutw.jpg"],["给我钱","qkx81f.jpg"],["我萎了","r3ry3s.jpg"],["晕倒","tzmus0.gif"],["瘫","lt2u3s.png"],["拼尽全力倒下了","6gt4sn.jpg"],["死了灵魂出窍","71mnww.jpg"],["上天","dm5ejw.png"],["叫救护车","e4fqlk.png"],["卖掉了","vbiei1.png"],["被逮捕了","uzeywu.jpg"],["告到小狗法庭","iaordo.jpg"],["谢谢宝贝我现在那里好硬","862o48.jpg"],["我会勃起","qyyd9g.jpg"],["好棒我勃起了","ewen85.jpg"],["不好意思勃起了","oobfl0.png"],["鸡巴梆硬去趟厕所","pbxrqh.jpg"],["我兴奋起来了","ejuvde.jpg"],["上钩了","cormmk.jpg"],["反正我就是变态","qgha72.jpg"],["听不懂想亲嘴","ehcmdc.jpg"],["现在强烈地想做爱","oqh283.jpg"],["我们只是在做爱的朋友啊","vevudb.jpg"],["我要草你","5neozi.jpg"],["心情不好见人就操","o2jwl1.jpg"],["你骂我不怕我是抖爱慕吗","qlbdzk.jpg"],["对不良诱惑说都要","nmoc9l.jpg"],["阿弥陀佛","9cwm60.jpg"],["菩萨喜欢坚强的孩子","1ezbfz.jpg"],["悠闲","wnp9jl.gif"],["饿了","w0cx8k.jpg"],["小狗吃饭","43inr1.jpg"],["嗨有时间吗","3tc5bv.jpg"],["收到","ldqwqr.jpg"],["了解","wm5pcq.jpg"],["探头探脑","6p8w3k.gif"],["探头","wmjn8b.gif"],["盼望","clnev9.jpg"],["盼望","y5c5gi.jpg"],["忍耐中","8mnszb.jpg"],["加油","08pu9k.jpg"],["加油加油","fhkvsl.jpg"],["困了","8ndqhv.jpg"],["晚安","f5qi7r.jpg"],["晚安","vpsd3q.gif"]].map(([name, code], index) => ({
+  id: `worldbook_${index}_${code.replace(/\W/g, '_')}`,
+  name, code, note: '世界书预设', source: 'url', builtin: true,
+  url: `https://files.catbox.moe/${code}`,
+}));
+
 const SOURCE = [
   ['char', '冷脸帅气黑发男', 'nbR22Lv.jpg', '此世界书默认CHAR头像'],
   ['char', '骚气吐舌黑发男', 'nb7Bhaj.png', ''],
@@ -49,6 +58,7 @@ let panel, listEl, tab = 'char', speaker = '', currentRequest = 0;
 let localDB;
 let renderTimer;
 let startupDone = false;
+let stickerDisplayLimit = 36;
 function ctx() { return globalThis.SillyTavern?.getContext?.(); }
 function store() {
   const c = ctx();
@@ -68,7 +78,7 @@ function store() {
   return s;
 }
 function selections() { return ctx()?.chatMetadata?.[KEY]?.selectedByName || {}; }
-function saveLibrary() { ctx()?.saveSettingsDebounced?.(); }
+function saveLibrary() { ctx()?.saveSettingsDebounced?.(); syncLiveAiLibrary(); }
 function status(message, error = false) {
   const node = panel?.querySelector('#lb-status');
   if (node) { node.textContent = message; node.classList.toggle('lb-error', error); }
@@ -124,6 +134,7 @@ async function setSelected(name, id, { fromAi = false } = {}) {
   if (!c.chatMetadata[KEY].selectedByName) c.chatMetadata[KEY].selectedByName = {};
   c.chatMetadata[KEY].selectedByName[n] = item.id;
   await c.saveMetadata?.();
+  syncLiveAiLibrary();
   queueRefresh();
   return true;
 }
@@ -138,6 +149,7 @@ async function setPair(pair, charNick, userNick, { fromAi = false } = {}) {
   const sel = c.chatMetadata[KEY].selectedByName ||= {};
   sel[cn] = a.id; sel[un] = b.id;
   await c.saveMetadata?.();
+  syncLiveAiLibrary();
   queueRefresh(); return true;
 }
 function resolvedName(name) { return clean(name, 80); }
@@ -186,6 +198,53 @@ async function refreshStickers() {
     } catch (error) { console.warn('[light-bubble] sticker load failed', error); }
   }
 }
+
+const AI_PROMPT_KEY = 'light-bubble:live-image-library';
+/** Added by the extension to the next generation. Does not edit the world book. */
+function liveAiLibraryText() {
+  const s = store();
+  const installedIds = new Set(base.map(item => item.id));
+  const customAvatars = s.items.filter(x => !installedIds.has(x.id)).slice(-80);
+  const customStickers = s.stickers.slice(-120);
+  const current = Object.entries(selections()).map(([name,id]) => {
+    const item = s.items.find(x => x.id === id);
+    return item ? `${clean(name,50)} → ${clean(item.name,50)} [头像ID:${clean(item.id,70)}]` : '';
+  }).filter(Boolean);
+  if (!customAvatars.length && !customStickers.length && !current.length) return '';
+  const rows = [
+    '[轻量气泡 · 动态素材补充 / 仅用于实际出现的线上聊天]',
+    '本段不要求角色主动开始线上聊天。它只补充用户保存的头像和表情包索引，不更改原世界书。',
+    'AI只能读取本地图片的名称与文字备注，不能看到图片内容。不可编造不存在的图像ID。',
+  ];
+  if (current.length) rows.push('当前头像选择：', ...current);
+  if (customAvatars.length) {
+    rows.push('用户新增头像（ID / 分类 / 名称 / 备注）：');
+    for (const x of customAvatars) rows.push(`头像ID:${clean(x.id,70)}；分类:${clean(x.category,12)}；名称:${clean(x.name,40)}；备注:${clean(x.note,120) || '无'}`);
+    rows.push('角色/NPC在剧情合理地更换头像时，可在聊天气泡之外输出 <AV_SET>发言昵称|头像ID</AV_SET>。');
+  }
+  if (customStickers.length) {
+    rows.push('用户新增表情包（以下ID可用于L_EMJ或R_EMJ标签的第三段）：');
+    for (const x of customStickers) rows.push(`STK:${clean(x.id,80)} = ${clean(x.name,40)}；描述:${clean(x.note,120) || '无'}`);
+    rows.push('使用示例：<L_EMJ>发言昵称|头像文件名|STK:真实ID</L_EMJ>。预设表情包仍使用原世界书的Catbox短文件名。');
+  }
+  if (s.allowAiUser) rows.push('用户已允许按剧情更换USER头像与情侣成套头像。');
+  else rows.push('未授权AI自行更换USER头像或成套情侣头像。');
+  return rows.join('\n');
+}
+function syncLiveAiLibrary() {
+  const c = ctx();
+  if (typeof c?.setExtensionPrompt !== 'function') return false;
+  try {
+    // SillyTavern IN_CHAT position = 1, near the end of prompt at depth 1,
+    // role=0 (system). Empty string removes the stale injection.
+    c.setExtensionPrompt(AI_PROMPT_KEY, liveAiLibraryText(), 1, 1, false, 0);
+    return true;
+  } catch (e) {
+    console.warn('[light-bubble] Cannot update dynamic prompt:', e);
+    return false;
+  }
+}
+
 function macroText() {
   const s = store();
   const current = selections();
@@ -231,6 +290,57 @@ function makeInput(name, type = 'text', placeholder = '') {
 function rowLabel(label, elem) {
   const wrap = make('label', 'lb-field'); wrap.append(make('span', '', label), elem); return wrap;
 }
+
+/**
+ * Stable device picker for mobile browsers / SillyTavern themes.
+ * A visible button opens the native Android file selector. Do not rely on
+ * the browser-provided file-input button, which some themes hide entirely.
+ */
+function createDevicePicker(input, itemLabel = '图片') {
+  input.classList.add('lb-file-native');
+  input.removeAttribute('hidden');
+  input.tabIndex = -1;
+  input.setAttribute('aria-label', `选择本地${itemLabel}文件`);
+
+  const wrap = make('div', 'lb-device-picker');
+  const button = make('button', 'lb-device-button', '从手机相册 / 文件中选择图片');
+  button.type = 'button';
+  const feedback = make('div', 'lb-device-feedback', '尚未选择图片');
+  feedback.setAttribute('aria-live', 'polite');
+  const preview = make('img', 'lb-device-preview');
+  preview.alt = '已选择的本地图片预览';
+  preview.hidden = true;
+  let objectUrl = '';
+  button.addEventListener('click', () => {
+    // Called synchronously within the trusted click event (required on Android).
+    input.click();
+  });
+  function clearPreview() {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = '';
+    preview.removeAttribute('src');
+    preview.hidden = true;
+  }
+  function updateFile() {
+    clearPreview();
+    const file = input.files?.[0];
+    if (!file) {
+      feedback.textContent = '尚未选择图片';
+      return;
+    }
+    feedback.textContent = `已选择：${file.name}（${Math.max(1, Math.ceil(file.size / 1024))} KB）`;
+    if (file.type.startsWith('image/')) {
+      objectUrl = URL.createObjectURL(file);
+      preview.src = objectUrl;
+      preview.hidden = false;
+    }
+  }
+  input.addEventListener('change', updateFile);
+  wrap.append(input, button, feedback, preview,
+    make('small', 'lb-device-hint', '选完图片后，请继续点击下方的「保存」按钮。'));
+  return { wrap, reset() { clearPreview(); feedback.textContent = '尚未选择图片'; } };
+}
+
 function safeHref(value, provider = 'iili') {
   let s = String(value || '').trim();
   if (!s) return '';
@@ -307,6 +417,7 @@ function buildCards() {
   if (!listEl) return;
   listEl.replaceChildren();
   const isSticker = tab === 'sticker';
+  panel.querySelector('#lb-sticker-search-wrap').hidden = !isSticker;
   panel.querySelector('#lb-avatar-add').hidden = isSticker;
   panel.querySelector('#lb-sticker-add').hidden = !isSticker;
   panel.querySelector('#lb-speaker-wrap').hidden = isSticker;
@@ -349,39 +460,58 @@ function buildCards() {
   }
 }
 function buildStickerCards() {
-  const entries = store().stickers;
-  if (!entries.length) listEl.append(make('p', 'lb-empty', '尚未添加表情包。点下面的「添加表情包」就能从手机相册选择或粘贴图片URL。'));
-  for (const item of entries) {
+  const custom = store().stickers.map(s => ({...s, builtin: false}));
+  const all = [...custom, ...PRESET_STICKERS];
+  const search = clean(panel.querySelector('#lb-sticker-search')?.value || '', 80).toLowerCase();
+  const matches = search ? all.filter(s => `${s.name} ${s.code || ''} ${s.note || ''} ${s.id}`.toLowerCase().includes(search)) : all;
+  const count = make('p', 'lb-sticker-count', `世界书预设 ${PRESET_STICKERS.length} 张 · 自定义 ${custom.length} 张 · 当前匹配 ${matches.length} 张`);
+  listEl.append(count);
+  if (!matches.length) listEl.append(make('p', 'lb-empty', '没有找到匹配的表情包，可以在下方自行添加。'));
+  for (const item of matches.slice(0, stickerDisplayLimit)) {
     const card = make('div', 'lb-card');
     const pick = make('button', 'lb-card-pick'); pick.type = 'button';
     pick.title = '点击查看AI使用的表情包代码';
-    const preview = make('img', 'lb-card-preview lb-sticker-preview'); preview.alt = item.name;
+    const preview = make('img', 'lb-card-preview lb-sticker-preview');
+    preview.loading = 'lazy'; preview.alt = item.name;
     const src = stickerUrl(item);
     if (src) preview.src = src;
     else if (item.source === 'local') void ensureSticker(item).then(url => { if (url && preview.isConnected) preview.src = url; });
     const name = make('span', 'lb-card-name', item.name);
-    const note = make('span', 'lb-card-note', item.note || '无描述');
+    const note = make('span', 'lb-card-note', item.builtin ? '原世界书 · Catbox' : (item.note || '用户添加'));
     pick.append(preview, name, note);
     pick.addEventListener('click', () => {
-      const code = `STK:${item.id}`;
-      const input = panel.querySelector('#lb-sticker-code');
-      input.value = code;
-      status(`已选「${item.name}」。AI可以使用代码 ${code} 发送这张表情包。`);
+      const code = item.builtin ? item.code : `STK:${item.id}`;
+      panel.querySelector('#lb-sticker-code').value = code;
+      status(`已选「${item.name}」。发送表情包时使用代码 ${code}。`);
     });
-    const remove = make('button', 'lb-card-delete', '删除'); remove.type = 'button';
-    remove.setAttribute('aria-label', `删除表情包${item.name}`);
-    remove.addEventListener('click', async () => {
-      if (!confirm(`删除表情包「${item.name}」？旧聊天中使用过这张图的消息也将无法继续正常显示。`)) return;
-      store().stickers = store().stickers.filter(x => x.id !== item.id); saveLibrary();
-      if (item.source === 'local') {
-        await localDB?.removeItem(`${STICKER_IMAGE_KEY}${item.id}`);
-        stickerCache.delete(item.id);
-      }
-      buildCards(); status('表情包已删除。'); queueRefresh();
-    });
-    card.append(pick, remove); listEl.append(card);
+    card.append(pick);
+    if (item.builtin) {
+      const fixed = make('span', 'lb-card-preset', '世界书预设');
+      card.append(fixed);
+    } else {
+      const remove = make('button', 'lb-card-delete', '删除'); remove.type = 'button';
+      remove.setAttribute('aria-label', `删除表情包${item.name}`);
+      remove.addEventListener('click', async () => {
+        if (!confirm(`删除表情包「${item.name}」？旧聊天中使用过这张图的消息也将无法继续正常显示。`)) return;
+        store().stickers = store().stickers.filter(x => x.id !== item.id); saveLibrary();
+        if (item.source === 'local') {
+          await localDB?.removeItem(`${STICKER_IMAGE_KEY}${item.id}`);
+          stickerCache.delete(item.id);
+        }
+        buildCards(); status('表情包已删除。'); queueRefresh();
+      });
+      card.append(remove);
+    }
+    listEl.append(card);
+  }
+  if (matches.length > stickerDisplayLimit) {
+    const more = make('button', 'lb-sticker-more', `显示更多（还有 ${matches.length - stickerDisplayLimit} 张）`);
+    more.type = 'button';
+    more.addEventListener('click', () => { stickerDisplayLimit += 36; buildCards(); });
+    listEl.append(more);
   }
 }
+
 function addStickerForm(box) {
   const details = make('details', 'lb-add'); details.id = 'lb-sticker-add'; details.hidden = true;
   details.append(make('summary', '', '+ 添加表情包（URL / 手机图片 / GIF）'));
@@ -394,9 +524,11 @@ function addStickerForm(box) {
   }
   const url = makeInput('url', 'text', 'https://... 或 q6bahb.jpg'); url.hidden = true;
   const file = makeInput('file', 'file'); file.accept = 'image/png,image/jpeg,image/webp,image/gif';
-  const area = make('div', 'lb-source'); area.append(url, file);
-  const updateSource = () => { url.hidden = source.value !== 'url'; file.hidden = source.value !== 'local'; };
+  const device = createDevicePicker(file, '表情包');
+  const area = make('div', 'lb-source'); area.append(url, device.wrap);
+  const updateSource = () => { url.hidden = source.value !== 'url'; device.wrap.hidden = source.value !== 'local'; };
   source.addEventListener('change', updateSource);
+  updateSource();
   form.append(rowLabel('表情包名称（AI可读）', name), rowLabel('图片意思/使用场合（AI可读）', note), rowLabel('来源', source), area);
   const submit = make('button', 'lb-primary', '添加到表情包库'); submit.type = 'submit'; form.append(submit);
   form.addEventListener('submit', async e => {
@@ -415,7 +547,7 @@ function addStickerForm(box) {
         stickerCache.set(item.id, data);
       }
       store().stickers.push(item); saveLibrary();
-      form.reset(); updateSource(); details.open = false; buildCards();
+      form.reset(); device.reset(); updateSource(); details.open = false; buildCards();
       status(`已添加「${item.name}」。AI在下次读取动态表情包库时可以使用它。`);
     } catch (error) { status(`添加失败：${error.message}`, true); }
     finally { submit.disabled = false; }
@@ -449,6 +581,11 @@ function addPanelUI() {
     b.addEventListener('click', () => uiTab(category)); tabs.append(b);
   }
   box.append(tabs);
+  const search = makeInput('searchSticker', 'search', '搜索表情包名称或文件代码');
+  search.id = 'lb-sticker-search'; search.setAttribute('aria-label', '搜索表情包');
+  const searchWrap = rowLabel('搜索表情包', search);
+  searchWrap.id = 'lb-sticker-search-wrap'; box.append(searchWrap);
+  search.addEventListener('input', () => { stickerDisplayLimit = 36; if (tab === 'sticker') buildCards(); });
   listEl = make('div', 'lb-grid'); box.append(listEl);
   const pairs = make('div', 'lb-pair-section'); pairs.id = 'lb-pair-section';
   const pairSelect = make('select'); pairSelect.id = 'lb-pair-select';
@@ -474,8 +611,9 @@ function addPanelUI() {
   }
   const sourceArea = make('div', 'lb-source');
   const urlInput = makeInput('url', 'url', 'https://... 或 KbcQEW7.jpg'); urlInput.type = 'text'; urlInput.id = 'lb-url';
-  const fileInput = makeInput('file', 'file'); fileInput.id = 'lb-file'; fileInput.accept = 'image/png,image/jpeg,image/webp,image/gif'; fileInput.hidden = true;
-  sourceArea.append(urlInput, fileInput);
+  const fileInput = makeInput('file', 'file'); fileInput.id = 'lb-file'; fileInput.accept = 'image/png,image/jpeg,image/webp,image/gif';
+  const device = createDevicePicker(fileInput, '头像');
+  sourceArea.append(urlInput, device.wrap);
   const pairWrap = make('div', 'lb-pair-settings'); const pairName = makeInput('pair', 'text', '情侣套图名字'); pairName.maxLength = 40;
   const side = make('select'); side.name = 'side';
   for (const [value, label] of [['char', '角色头像'], ['user', '用户头像']]) { const opt = make('option', '', label); opt.value = value; side.append(opt); }
@@ -483,7 +621,12 @@ function addPanelUI() {
   const note = makeInput('note', 'text', '外貌特征、画风等，AI只能看到这里的文字'); note.maxLength = 120;
   form.append(rowLabel('归类', category), rowLabel('图片来源', sourcePicker), sourceArea, pairWrap,
     rowLabel('备注（AI可读）', note));
-  sourcePicker.addEventListener('change', () => { urlInput.hidden = sourcePicker.value !== 'url'; fileInput.hidden = sourcePicker.value !== 'local'; });
+  const updateAvatarSource = () => {
+    urlInput.hidden = sourcePicker.value !== 'url';
+    device.wrap.hidden = sourcePicker.value !== 'local';
+  };
+  sourcePicker.addEventListener('change', updateAvatarSource);
+  updateAvatarSource();
   category.addEventListener('change', () => { pairWrap.hidden = category.value !== 'couple'; });
   const submit = make('button', 'lb-primary', '保存到头像库'); submit.type = 'submit'; form.append(submit);
   form.addEventListener('submit', async e => {
@@ -505,8 +648,8 @@ function addPanelUI() {
         imgCache.set(item.id, encoded);
       }
       store().items.push(item); saveLibrary();
-      setTabForCategory(item.category); details.open = false; form.reset();
-      sourcePicker.dispatchEvent(new Event('change')); category.dispatchEvent(new Event('change'));
+      setTabForCategory(item.category); details.open = false; form.reset(); device.reset();
+      updateAvatarSource(); category.dispatchEvent(new Event('change'));
       status(`已添加「${item.name}」；可以点击上方预览来选用。`);
     } catch (err) { status(`添加失败：${err.message}`, true); }
     finally { submit.disabled = false; }
@@ -557,6 +700,7 @@ function init() {
   try { localDB = (globalThis.SillyTavern?.libs?.localforage || globalThis.localforage)?.createInstance?.({ name: 'sillytavern-light-bubble', storeName: 'avatars_v1' }); }
   catch (e) { console.warn('[lb-avatar] IndexedDB not available:', e); }
   store();
+  syncLiveAiLibrary();
   try { c.macros.register('avatarLibrary', { description: '当前聊天头像及可选表情包、对应名称与AI可读描述', handler: () => macroText() }); }
   catch (e) { console.warn('[lb-avatar] Could not register macro', e); }
   addPanelUI();
@@ -572,6 +716,9 @@ function init() {
   if (ev && source) {
     for (const event of [ev.CHAT_CHANGED, ev.USER_MESSAGE_RENDERED, ev.CHARACTER_MESSAGE_RENDERED, ev.MESSAGE_EDITED, ev.MESSAGE_SWIPED])
       if (event) source.on(event, queueRefresh);
+    if (ev.CHAT_CHANGED) source.on(ev.CHAT_CHANGED, syncLiveAiLibrary);
+    if (ev.GENERATION_AFTER_COMMANDS) source.on(ev.GENERATION_AFTER_COMMANDS, syncLiveAiLibrary);
+    else if (ev.GENERATION_STARTED) source.on(ev.GENERATION_STARTED, syncLiveAiLibrary);
     if (ev.MESSAGE_RECEIVED) source.on(ev.MESSAGE_RECEIVED, data => { void applyAiAvatarTags(data); });
   }
   queueRefresh();

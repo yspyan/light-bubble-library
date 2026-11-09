@@ -114,3 +114,46 @@ body > .lb-overlay .lb-close {
     }
     body > .lb-overlay .lb-card-preview { max-width: 100%; }
 }
+
+
+/* v1.2.4: visible mobile device-picker buttons (avatar and sticker). */
+.lb-device-picker[hidden], .lb-device-preview[hidden] { display: none !important; }
+.lb-device-picker { position: relative; width: 100%; margin: 4px 0 10px; }
+.lb-dialog .lb-file-native {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.lb-device-button {
+  display: block !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #555 !important;
+  border-radius: 9px !important;
+  padding: 10px 12px !important;
+  background: #fff !important;
+  color: #151515 !important;
+  font: 600 14px/1.45 system-ui, sans-serif !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+.lb-device-button:focus-visible { outline: 2px solid #222 !important; outline-offset: 2px; }
+.lb-device-feedback { color: #555; font-size: 12px; overflow-wrap: anywhere; margin: 7px 0 4px; }
+.lb-device-preview { display: block; width: 82px; height: 82px; border-radius: 8px; object-fit: contain; background: #f2f2f2; margin: 6px 0; }
+.lb-device-hint { display: block; color: #777; font-size: 11px; line-height: 1.5; }
+
+/* v1.2.5: Original worldbook sticker gallery + search / incremental load */
+#lb-sticker-search-wrap[hidden] { display: none !important; }
+#lb-sticker-search-wrap { margin-top: 6px; }
+.lb-sticker-count { grid-column: 1/-1; font-size: 12px; color: #777; margin: 0; padding: 2px 0; }
+.lb-sticker-more { grid-column: 1/-1; font-size: 13px; color: #222; background: #f3f3f3; border: 1px solid #ddd; border-radius: 8px; padding: 12px; cursor: pointer; min-height: 44px; }
+.lb-card-preset { display: block; padding: 6px 2px; font-size: 11px; color: #777; background: #f7f7f7; border-top: 1px solid #eee; text-align: center; }
