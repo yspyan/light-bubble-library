@@ -44,3 +44,73 @@
 .lb-sticker-copy .lb-open-button { width: 100%; }
 .lb-sticker-copy[hidden], #lb-sticker-add[hidden], #lb-avatar-add[hidden], #lb-speaker-wrap[hidden] { display: none !important; }
 @media (max-width: 420px) { .lb-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+
+/* v1.2.2 — Mobile panel scrolling fix.
+   The outer overlay, rather than the long dialog, owns the vertical scroll.
+   This avoids vertically centered dialogs being clipped above the viewport
+   by SillyTavern themes or mobile browser viewport changes. */
+body > .lb-overlay:not([hidden]) {
+    position: fixed !important;
+    inset: 0 !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100vh !important; /* fallback for browsers without dvh */
+    max-height: none !important;
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    transform: none !important;
+}
+@supports (height: 100dvh) {
+    body > .lb-overlay:not([hidden]) { height: 100dvh !important; }
+}
+body > .lb-overlay > .lb-dialog {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    box-sizing: border-box !important;
+    width: min(100%, 520px) !important;
+    max-width: 520px !important;
+    max-height: none !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+    transform: none !important;
+}
+body > .lb-overlay > .lb-dialog > .lb-top {
+    position: sticky !important;
+    top: -12px;
+    z-index: 10;
+    padding: 10px 0 !important;
+    margin-top: -8px;
+    background: #fcfcfc !important;
+    border-radius: 12px 12px 0 0;
+}
+body > .lb-overlay .lb-close {
+    flex: 0 0 42px;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    line-height: 1 !important;
+}
+@media (max-width: 600px) {
+    body > .lb-overlay:not([hidden]) {
+        padding: max(8px, env(safe-area-inset-top)) 8px max(12px, env(safe-area-inset-bottom)) !important;
+    }
+    body > .lb-overlay > .lb-dialog {
+        border-radius: 12px !important;
+        padding: 12px !important;
+    }
+    body > .lb-overlay > .lb-dialog > .lb-top {
+        top: -12px;
+    }
+    body > .lb-overlay .lb-card-preview { max-width: 100%; }
+}

@@ -282,12 +282,16 @@ function setTabForCategory(category) { if (CATS.some(([k]) => k === category)) u
 function showPanel(target = '') {
   speaker = resolvedName(target);
   panel.hidden = false;
+  // Always open at the top, even after scrolling a long avatar library.
+  panel.scrollTop = 0;
   const targetInput = panel.querySelector('#lb-speaker');
   targetInput.value = speaker;
   panel.querySelector('#lb-char-nick').value = currentCharName();
   panel.querySelector('#lb-user-nick').value = currentUserName();
   buildCards();
-  panel.querySelector('.lb-dialog').focus();
+  const dialog = panel.querySelector('.lb-dialog');
+  try { dialog.focus({ preventScroll: true }); } catch { dialog.focus(); }
+  panel.scrollTop = 0;
 }
 function hidePanel() { panel.hidden = true; }
 async function choose(item) {
