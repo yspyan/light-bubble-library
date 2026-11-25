@@ -172,11 +172,30 @@ function remoteAvatarUrl(code) {
   if (/^[a-z0-9_-]+\.(?:jpe?g|png|webp|gif)$/i.test(raw)) return `https://iili.io/${raw}`;
   return safeHref(raw);
 }
+// Keep a readable portrait if the chosen local file disappeared, instead of
+// letting one unavailable selection break every message from the same speaker.
+function backupAvatarItem(name) {
+  const n = String(name || '').trim();
+  const npcNames = { '沈逾': '沈逾头像', '花弄雨': '花弄雨头像', '宋知行': '宋知行头像', '林燃': '林燃头像' };
+  const desired = isUserSpeaker(n) ? '躺床上睡觉的呆猫八条' : (npcNames[n] || '冷脸帅气黑发男');
+  return base.find(item => item.name === desired) || null;
+}
+function avatarPlaceholder(name) {
+  const first = String(name || '?').trim().slice(0, 1).replace(/[<>&"']/g, '') || '?';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" rx="14" fill="#e7e7e7"/><text x="60" y="76" text-anchor="middle" fill="#555" font-family="sans-serif" font-size="48">${first}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+async function resolvedAvatarItemUrl(item) {
+  if (!item) return '';
+  try { return await ensureImage(item); }
+  catch (err) { console.warn('[light-bubble] local avatar could not be loaded', item.id, err); return ''; }
+}
 async function refreshAvatars() {
   const request = ++currentRequest;
   const selected = selections();
   const elements = document.querySelectorAll('#chat img.lb-speaker-avatar');
   for (const element of elements) {
+    if (!element.isConnected) continue;
     const name = resolvedName(element.dataset.lbName);
     if (!element.dataset.lbOriginal) element.dataset.lbOriginal = element.getAttribute('src') || '';
     const sourceCode = avatarCodeFromElement(element);
@@ -184,27 +203,58 @@ async function refreshAvatars() {
     element.tabIndex = 0;
     element.setAttribute('role', 'button');
     element.setAttribute('aria-label', `更换${name}的头像`);
-    // A manual/previously chosen avatar takes precedence, otherwise resolve
-    // the message's own avatar ID. Without this the browser tries to request
-    // https://iili.io/avatar_xxx and displays a broken-image icon.
-    const item = findItem(selected[name]) || findItem(sourceCode);
-    const url = item ? await ensureImage(item) : remoteAvatarUrl(sourceCode);
+
+    // Priority: user selection → original message → stored default.
+    // Crucially, an unavailable local selection must NOT suppress a valid
+    // original iili.io filename that is still present in the message.
+    const selectedItem = findItem(selected[name]);
+    const messageItem = findItem(sourceCode);
+    const defaultItem = backupAvatarItem(name);
+    let url = await resolvedAvatarItemUrl(selectedItem);
+    let marker = url ? `chosen:${selectedItem.id}` : '';
+    if (!url) {
+      url = await resolvedAvatarItemUrl(messageItem);
+      if (url) marker = `message-library:${messageItem.id}`;
+    }
+    if (!url) {
+      url = remoteAvatarUrl(sourceCode);
+      if (url) marker = `message-remote:${sourceCode}`;
+    }
+    if (!url) {
+      url = await resolvedAvatarItemUrl(defaultItem);
+      if (url) marker = `default:${defaultItem.id}`;
+    }
     if (request !== currentRequest) return;
-    const marker = item ? `library:${item.id}` : `remote:${sourceCode}`;
-    if (url && element.isConnected) {
-      if (element.dataset.lbApplied !== marker || element.getAttribute('src') !== url) {
-        element.src = url;
-        element.dataset.lbApplied = marker;
-      }
-    } else if (element.isConnected && /^avatar_[a-z0-9_-]+$/i.test(sourceCode)) {
-      // An ID absent from the current device cannot be resolved to a photo.
-      // Prevent the fake iili.io URL from being treated as an image.
-      element.removeAttribute('src');
-      element.alt = '本地头像未在此设备找到';
-      element.title = '此本地头像未在当前设备找到；点击头像可重新选择。';
+    if (!element.isConnected) continue;
+
+    if (!url) {
+      element.onerror = null;
+      element.src = avatarPlaceholder(name);
+      element.dataset.lbApplied = `missing:${name}`;
+      element.title = '找不到这张头像原图，点击可从头像库重新选择';
+      continue;
+    }
+    // If the image host responds with an error, show initials instead of the
+    // browser broken-image glyph. Do not erase the stored selection/filename.
+    if (element.dataset.lbFailedMarker === marker) {
+      if (!element.getAttribute('src')) element.src = avatarPlaceholder(name);
+      element.title = '此头像无法加载，请检查图床或重新选择头像';
+      continue;
+    }
+    element.onerror = () => {
+      if (!element.isConnected || element.dataset.lbApplied !== marker) return;
+      element.dataset.lbFailedMarker = marker;
+      element.onerror = null;
+      element.src = avatarPlaceholder(name);
+      element.title = '此头像无法加载，点击重新选择；原来的头像记录没有删除';
+    };
+    if (element.dataset.lbApplied !== marker || element.getAttribute('src') !== url) {
+      element.dataset.lbApplied = marker;
+      element.src = url;
     }
   }
 }
+
 async function refreshStickers() {
   for (const image of document.querySelectorAll('#chat img.lb-sticker-image')) {
     const ref = String(image.dataset.lbSticker || '').trim();
